@@ -4,6 +4,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
+using System.Drawing;
 namespace ChatInConsoleServerside
 {
     class Program
@@ -11,9 +13,13 @@ namespace ChatInConsoleServerside
         static byte[] buffer = new byte[1024];
         static void Main(string[] args)
         {
+
+            var image = new Bitmap(@"C:\Users\Documents\Desktop\Wpf\media_player-hor.png");
+            ImageConverter imageconverter = new ImageConverter();
+            var imagebytes=((byte[])imageconverter.ConvertTo(image, typeof(byte[])));
             Console.WriteLine("======================SERVER====================");
             #region Client Message
-            IPEndPoint endp = new IPEndPoint(IPAddress.Parse("172.20.28.56"), 1031);
+            IPEndPoint endp = new IPEndPoint(IPAddress.Parse("10.1.16.38"), 1031);
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(endp);
             socket.Listen(10);
@@ -55,7 +61,8 @@ namespace ChatInConsoleServerside
                         {
                             foreach (var item in clients)
                             {
-                                item.Send(Encoding.ASCII.GetBytes(message));
+                                // item.Send(Encoding.ASCII.GetBytes(message));
+                                item.Send(imagebytes);
                             }
                         });
                     }
