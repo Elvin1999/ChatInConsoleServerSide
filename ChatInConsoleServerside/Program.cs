@@ -10,34 +10,46 @@ namespace ChatInConsoleServerside
 {
     class Program
     {
-        static byte[] buffer = new byte[1024];
+        static byte[] buffer = new byte[1024];      
         static void Main(string[] args)
         {
-
-            var image = new Bitmap(@"C:\Users\Documents\Desktop\Wpf\media_player-hor.png");
-            ImageConverter imageconverter = new ImageConverter();
-            var imagebytes=((byte[])imageconverter.ConvertTo(image, typeof(byte[])));
+            //var image = new Bitmap(@"C:\Users\Documents\Desktop\Wpf\media_player-hor.png");
+            //ImageConverter imageconverter = new ImageConverter();
+            //var imagebytes=((byte[])imageconverter.ConvertTo(image, typeof(byte[])));
             Console.WriteLine("======================SERVER====================");
             #region Client Message
             IPEndPoint endp = new IPEndPoint(IPAddress.Parse("10.1.16.38"), 1031);
-            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Socket socket;
+            socket= new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(endp);
             socket.Listen(10);
             byte[] buffer = new byte[1024];
-            List<Socket> clients = new List<Socket>();
+            // List<Socket> clients = new List<Socket>();
+            List<CustomSocket> clients = new List<CustomSocket>();
             int counter = 0;
-            Socket client = null;
+            CustomSocket client = new CustomSocket();
+            client.Client = null;
+            //Socket client = null;
             Task accept = Task.Run(() =>
             {
                 while (true)
                 {
-                    client = socket.Accept();
+                    client.Client=socket.Accept();
                     clients.Add(client);
-                    ++counter;
-                    if (counter == 2)
-                    {
-                        break;
-                    }
+                    //while (client.Id == -5)
+                    //{
+                    //    try
+                    //    {
+
+                    //        int length = client.Client.Receive(buffer);
+                    //        client.Id = int.Parse(Encoding.ASCII.GetString(buffer, 0, length));
+                    //        Console.WriteLine(client.Id.ToString());
+                    //    }
+                    //    catch (Exception)
+                    //    {
+                    //        client.Id = -5;
+                    //    }
+                    //}
                 }
 
             });
@@ -51,7 +63,7 @@ namespace ChatInConsoleServerside
                         foreach (var item in clients)
                         {
 
-                            item.Shutdown(SocketShutdown.Send);
+                            item.Client.Shutdown(SocketShutdown.Send);
                         }
                         break;
                     }
@@ -61,8 +73,8 @@ namespace ChatInConsoleServerside
                         {
                             foreach (var item in clients)
                             {
-                                // item.Send(Encoding.ASCII.GetBytes(message));
-                                item.Send(imagebytes);
+                                item.Client.Send(Encoding.ASCII.GetBytes(message));
+                                //item.Send(imagebytes);
                             }
                         });
                     }
@@ -79,7 +91,7 @@ namespace ChatInConsoleServerside
                         try
                         {
 
-                            int length = client.Receive(buffer);
+                            int length = client.Client.Receive(buffer);
                             Console.WriteLine(Encoding.ASCII.GetString(buffer, 0, length));
                         }
                         catch (Exception)
@@ -92,46 +104,46 @@ namespace ChatInConsoleServerside
             Task.WaitAll(sender, receiver);
             #endregion
         }
-        public static void AcceptCallback(IAsyncResult ia)
-        {
-            Socket socket = (Socket)ia.AsyncState;
-            socket = socket.EndAccept(ia);
+        //public static void AcceptCallback(IAsyncResult ia)
+        //{
+        //    Socket socket = (Socket)ia.AsyncState;
+        //    socket = socket.EndAccept(ia);
 
-            Task.Run(() =>
-            {
-                while (true)
-                {
-                    string message = Console.ReadLine();
-                    if (message == "quit")
-                    {
-                        socket.Shutdown(SocketShutdown.Send);
-                        break;
-                    }
-                    else
-                    {
-                        socket.Send(Encoding.ASCII.GetBytes(message));
-                    }
-                    Console.WriteLine("Server 1 " + message);
-                }
-            });
+        //    Task.Run(() =>
+        //    {
+        //        while (true)
+        //        {
+        //            string message = Console.ReadLine();
+        //            if (message == "quit")
+        //            {
+        //                socket.Shutdown(SocketShutdown.Send);
+        //                break;
+        //            }
+        //            else
+        //            {
+        //                socket.Send(Encoding.ASCII.GetBytes(message));
+        //            }
+        //            Console.WriteLine("Server 1 " + message);
+        //        }
+        //    });
 
-            Task.Run(() =>
-            {
-                while (true)
-                {
-                    int length = socket.Receive(buffer);
-                    Console.WriteLine("Client  " + Encoding.ASCII.GetString(buffer, 0, length));
-                }
-            });
-        }
-        public static void StartServer()
-        {
-            byte[] buffer = new byte[1024];
-            IPEndPoint endp = new IPEndPoint(IPAddress.Parse("172.20.28.56"), 1031);
-            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Bind(endp);
-            socket.Listen(10);
-            socket.BeginAccept(new AsyncCallback(AcceptCallback), socket);
-        }
+        //    Task.Run(() =>
+        //    {
+        //        while (true)
+        //        {
+        //            int length = socket.Receive(buffer);
+        //            Console.WriteLine("Client  " + Encoding.ASCII.GetString(buffer, 0, length));
+        //        }
+        //    });
+        //}
+        //public static void StartServer()
+        //{
+        //    byte[] buffer = new byte[1024];
+        //    IPEndPoint endp = new IPEndPoint(IPAddress.Parse("172.20.28.56"), 1031);
+        //    Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        //    socket.Bind(endp);
+        //    socket.Listen(10);
+        //    socket.BeginAccept(new AsyncCallback(AcceptCallback), socket);
+        //}
     }
 }
