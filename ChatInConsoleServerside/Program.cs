@@ -10,7 +10,7 @@ namespace ChatInConsoleServerside
 {
     class Program
     {
-        static byte[] buffer = new byte[1024];      
+        static byte[] buffer = new byte[1024];
         static void Main(string[] args)
         {
             //var image = new Bitmap(@"C:\Users\Documents\Desktop\Wpf\media_player-hor.png");
@@ -20,7 +20,7 @@ namespace ChatInConsoleServerside
             #region Client Message
             IPEndPoint endp = new IPEndPoint(IPAddress.Parse("10.1.16.38"), 1031);
             Socket socket;
-            socket= new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(endp);
             socket.Listen(10);
             byte[] buffer = new byte[1024];
@@ -34,22 +34,21 @@ namespace ChatInConsoleServerside
             {
                 while (true)
                 {
-                    client.Client=socket.Accept();
+                    client.Client = socket.Accept();
+                    client.Id = -5;                  
+                        try
+                        {
+                            int length = client.Client.Receive(buffer);
+                            client.Id = Convert.ToInt32(Encoding.ASCII.GetString(buffer, 0, length));
+                            
+                            Console.WriteLine("Id : " + client.Id.ToString());
+                        }
+                        catch (Exception)
+                        {
+                            client.Id = -5;
+                        }
+                    
                     clients.Add(client);
-                    //while (client.Id == -5)
-                    //{
-                    //    try
-                    //    {
-
-                    //        int length = client.Client.Receive(buffer);
-                    //        client.Id = int.Parse(Encoding.ASCII.GetString(buffer, 0, length));
-                    //        Console.WriteLine(client.Id.ToString());
-                    //    }
-                    //    catch (Exception)
-                    //    {
-                    //        client.Id = -5;
-                    //    }
-                    //}
                 }
 
             });
