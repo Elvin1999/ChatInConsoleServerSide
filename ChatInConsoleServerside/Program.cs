@@ -43,9 +43,10 @@ namespace ChatInConsoleServerside
                             
                             Console.WriteLine("Id : " + client.Id.ToString());
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
                             client.Id = -5;
+                        Console.WriteLine(ex.Message);
                         }
                     
                     clients.Add(client);
