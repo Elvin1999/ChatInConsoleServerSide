@@ -12,7 +12,7 @@ namespace ChatInConsoleServerside
     {
         static byte[] buffer = new byte[1024];
 
-        
+        public static int General_Id=0;
         static void Main(string[] args)
         {
 
@@ -35,7 +35,9 @@ namespace ChatInConsoleServerside
             {
                 while (true)
                 {
-                    client.Client = socket.Accept();                    
+                    client.Client = socket.Accept();
+                    client.Id = counter;
+                    ++counter;
                     clients.Add(client);
                 }
 
@@ -60,7 +62,15 @@ namespace ChatInConsoleServerside
                         {
                             foreach (var item in clients)
                             {
+                                if (item.Id == 0 && General_Id == 0)
+                                {
                                 item.Client.Send(Encoding.ASCII.GetBytes(message));
+                                }
+                                else if (item.Id == 1 && General_Id == 1)
+                                {
+                                    item.Client.Send(Encoding.ASCII.GetBytes(message));
+                                }
+
                                 //item.Send(imagebytes);
                             }
                         });
@@ -79,7 +89,23 @@ namespace ChatInConsoleServerside
                         {
 
                             int length = client.Client.Receive(buffer);
-                            Console.WriteLine(Encoding.ASCII.GetString(buffer, 0, length));
+                            var len = Encoding.ASCII.GetString(buffer, 0, length).Length;
+                            General_Id = Convert.ToInt32(Encoding.ASCII.GetString(buffer, 0, length)[len - 1]);
+                            var message=Encoding.ASCII.GetString(buffer, 0, length);
+                            foreach (var item in clients)
+                            {
+                                if (item.Id == 0 && General_Id == 0)
+                                {
+                                    item.Client.Send(Encoding.ASCII.GetBytes(message));
+                                }
+                                else if (item.Id == 1 && General_Id == 1)
+                                {
+                                    item.Client.Send(Encoding.ASCII.GetBytes(message));
+                                }
+
+                                //item.Send(imagebytes);
+                            }
+                            Console.WriteLine("Server 1 " + message);
                         }
                         catch (Exception)
                         {
