@@ -11,8 +11,11 @@ namespace ChatInConsoleServerside
     class Program
     {
         static byte[] buffer = new byte[1024];
+
+        
         static void Main(string[] args)
         {
+
             //var image = new Bitmap(@"C:\Users\Documents\Desktop\Wpf\media_player-hor.png");
             //ImageConverter imageconverter = new ImageConverter();
             //var imagebytes=((byte[])imageconverter.ConvertTo(image, typeof(byte[])));
@@ -20,35 +23,19 @@ namespace ChatInConsoleServerside
             #region Client Message
             IPEndPoint endp = new IPEndPoint(IPAddress.Parse("10.1.16.38"), 1031);
             Socket socket;
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket= new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(endp);
             socket.Listen(10);
             byte[] buffer = new byte[1024];
-            // List<Socket> clients = new List<Socket>();
             List<CustomSocket> clients = new List<CustomSocket>();
             int counter = 0;
             CustomSocket client = new CustomSocket();
             client.Client = null;
-            //Socket client = null;
             Task accept = Task.Run(() =>
             {
                 while (true)
                 {
-                    client.Client = socket.Accept();
-                    client.Id = -5;                  
-                        try
-                        {
-                            int length = client.Client.Receive(buffer);
-                            client.Id = Convert.ToInt32(Encoding.ASCII.GetString(buffer, 0, length));
-                            
-                            Console.WriteLine("Id : " + client.Id.ToString());
-                        }
-                        catch (Exception ex)
-                        {
-                            client.Id = -5;
-                        Console.WriteLine(ex.Message);
-                        }
-                    
+                    client.Client = socket.Accept();                    
                     clients.Add(client);
                 }
 
