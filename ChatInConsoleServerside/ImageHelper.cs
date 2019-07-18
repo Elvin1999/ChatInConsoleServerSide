@@ -17,7 +17,6 @@ namespace ChatInConsoleServerside
             ImageConverter ic = new ImageConverter();
             try
             {
-
                 Image img = ic.ConvertFrom(buffer) as Image;
                 Bitmap bitmap1 = new Bitmap(img);
                 bitmap1.Save($@"{path}\image{counter}.png");
