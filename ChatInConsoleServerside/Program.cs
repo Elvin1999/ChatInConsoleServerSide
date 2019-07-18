@@ -94,16 +94,29 @@ namespace ChatInConsoleServerside
                                 if (length != 0)
                                 {
                                     var len = Encoding.ASCII.GetString(buffer, 0, length).Length;
-                                    var gId = Convert.ToChar(Encoding.ASCII.GetString(buffer, 0, length)[len - 1]).ToString();
-                                    General_Id = Convert.ToInt32(gId);
-                                    Console.WriteLine("Id -  > " + General_Id.ToString());
+                                    //var gId = Convert.ToChar(Encoding.ASCII.GetString(buffer, 0, length)[len - 1]).ToString();
+                                    //General_Id = Convert.ToInt32(gId);
+                                    //Console.WriteLine("Id -  > " + General_Id.ToString());
                                     var message = Encoding.ASCII.GetString(buffer, 0, length);
-                                    if (General_Id == 0)
+                                    //if (General_Id == 0)
+                                    //{
+                                    //    clients[1].Client.Send(Encoding.ASCII.GetBytes(message));
+                                    //    Console.WriteLine("Server sent " + message);
+                                    //}
+                                    //else if (General_Id == 1)
+                                    //{
+                                    //    clients[0].Client.Send(Encoding.ASCII.GetBytes(message));
+                                    //    Console.WriteLine("Server sent " + message);
+                                    //}
+                                    //new test
+
+                                    var client_index = clients.FindIndex(x => x.Client == item.Client);
+                                    if (client_index == 0)
                                     {
                                         clients[1].Client.Send(Encoding.ASCII.GetBytes(message));
                                         Console.WriteLine("Server sent " + message);
                                     }
-                                    else if (General_Id == 1)
+                                    else if (client_index == 1)
                                     {
                                         clients[0].Client.Send(Encoding.ASCII.GetBytes(message));
                                         Console.WriteLine("Server sent " + message);
