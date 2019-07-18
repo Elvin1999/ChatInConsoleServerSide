@@ -36,6 +36,7 @@ namespace ChatInConsoleServerside
                     client.Client = socket.Accept();
                     client.Id = counter++;
                     clients.Add(client);
+                    Console.WriteLine("Connected");
                 }
 
             });
